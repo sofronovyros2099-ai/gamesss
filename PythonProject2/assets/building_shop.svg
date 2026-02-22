@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="260" viewBox="0 0 200 260">
+  <rect x="20" y="90" width="160" height="140" rx="16" fill="#ffffff" opacity="0.95"></rect>
+  <rect x="28" y="98" width="144" height="124" rx="12" fill="#eaf6ff"></rect>
+  <rect x="20" y="70" width="160" height="46" rx="16" fill="#ff9f2a"></rect>
+  <path d="M20 92h160v22H20z" fill="#ffffff" opacity="0.85"></path>
+  <path d="M20 92h24v22H20zM68 92h24v22H68zM116 92h24v22H116zM160 92h20v22h-20z" fill="#ff5a3b" opacity="0.85"></path>
+  <rect x="52" y="140" width="60" height="70" rx="10" fill="#3aa2ff" opacity="0.9"></rect>
+  <rect x="120" y="150" width="40" height="50" rx="10" fill="#bfe6ff"></rect>
+  <rect x="32" y="48" width="136" height="40" rx="14" fill="#ffb23a"></rect>
+  <text x="100" y="76" text-anchor="middle" font-size="26" font-family="Arial" font-weight="900" fill="#fff">SHOP</text>
+</svg>

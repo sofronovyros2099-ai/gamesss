@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <title>Business Empire Idle</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
+</head>
+
+<body>
+  <!-- Декоративный фон по бокам на ПК -->
+  <div id="pageBg"></div>
+
+  <!-- Stage (портретное поле) -->
+  <div id="wrap">
+    <div id="stage" aria-label="Game Stage">
+      <!-- Background -->
+      <div id="bg" class="bg"></div>
+
+      <!-- Top money bar -->
+      <div class="topbar">
+        <div class="moneybar">
+          <div class="coinBadge" aria-hidden="true"></div>
+          <div class="moneyValue" id="moneyValue">0</div>
+        </div>
+      </div>
+
+      <!-- Screen container -->
+      <div id="screenRoot" class="screenRoot">
+        <!-- CLICK screen -->
+        <section id="screen-click" class="screen active">
+          <div class="clickCenter">
+            <button id="bigCoinBtn" class="bigCoinBtn" type="button" aria-label="Tap coin">
+              <div class="bigCoinRing">
+                <div class="bigCoinFace"></div>
+              </div>
+              <div class="tapLabel" id="tapLabel">TAP!</div>
+              <div class="tapHand" aria-hidden="true"></div>
+            </button>
+          </div>
+
+          <div class="cards">
+            <div class="upgradeCard blue" data-upgrade="income">
+              <div class="ucIcon ucIncome" aria-hidden="true"></div>
+              <div class="ucText">
+                <div class="ucTitle" data-i18n="upgrade_income_title">Increase Income</div>
+                <div class="ucLevel" id="lvl-income">Lv. 1</div>
+              </div>
+              <button class="ucBtn" id="btn-income" type="button">
+                <span data-i18n="upgrade_btn">UPGRADE</span>
+                <i class="miniCoin" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <div class="upgradeCard orange" data-upgrade="boost">
+              <div class="ucIcon ucBoost" aria-hidden="true"></div>
+              <div class="ucText">
+                <div class="ucTitle" data-i18n="upgrade_boost_title">Business Boost</div>
+                <div class="ucLevel" id="lvl-boost">Lv. 1</div>
+              </div>
+              <button class="ucBtn" id="btn-boost" type="button">
+                <span data-i18n="upgrade_btn">UPGRADE</span>
+                <i class="miniCoin" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <div class="upgradeCard purple" data-upgrade="auto">
+              <div class="ucIcon ucAuto" aria-hidden="true"></div>
+              <div class="ucText">
+                <div class="ucTitle" data-i18n="upgrade_auto_title">Auto Collect</div>
+                <div class="ucLevel" id="lvl-auto">Lv. 1</div>
+              </div>
+              <button class="ucBtn" id="btn-auto" type="button">
+                <span data-i18n="upgrade_btn">UPGRADE</span>
+                <i class="miniCoin" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- BUSINESS/PROGRESS screen -->
+        <section id="screen-business" class="screen">
+          <div class="bizWrap">
+            <div class="bizSkyCoins" id="bizSkyCoins" aria-hidden="true"></div>
+
+            <div class="buildings">
+              <div class="bld bldShop" id="bldShop" aria-label="Shop building"></div>
+              <div class="bld bldInc" id="bldInc" aria-label="Business Inc building"></div>
+              <div class="bld bldCorp" id="bldCorp" aria-label="Corporation building"></div>
+            </div>
+
+            <div class="stages">
+              <button class="stagePill" id="pill1" type="button">Lv. 1</button>
+              <div class="stageArrow" aria-hidden="true"></div>
+              <button class="stagePill" id="pill2" type="button">Lv. 5</button>
+              <div class="stageArrow" aria-hidden="true"></div>
+              <button class="stagePill" id="pill3" type="button">Lv. 10</button>
+            </div>
+
+            <div class="progressRow">
+              <div class="progressBar">
+                <div class="progressFill" id="progressFill"></div>
+              </div>
+              <button class="upgradeWide" id="bizUpgradeBtn" type="button">
+                <span data-i18n="biz_upgrade_btn">UPGRADE</span>
+                <i class="miniCoin" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <div class="progressLabel" id="progressLabel">0/0</div>
+
+            <div class="statsPanel">
+              <div class="panelTitle" data-i18n="stats_title">Stats</div>
+              <div class="statsGrid">
+                <div class="statItem">
+                  <div class="statKey" data-i18n="stat_total_clicks">Total Clicks</div>
+                  <div class="statVal" id="statClicks">0</div>
+                </div>
+                <div class="statItem">
+                  <div class="statKey" data-i18n="stat_income_ps">Income / sec</div>
+                  <div class="statVal" id="statIPS">0</div>
+                </div>
+                <div class="statItem">
+                  <div class="statKey" data-i18n="stat_click_value">Click Value</div>
+                  <div class="statVal" id="statCV">0</div>
+                </div>
+                <div class="statItem">
+                  <div class="statKey" data-i18n="stat_play_time">Play Time</div>
+                  <div class="statVal" id="statPT">0:00</div>
+                </div>
+                <div class="statItem span2">
+                  <div class="statKey" data-i18n="stat_business_level">Business Level</div>
+                  <div class="statVal" id="statBL">1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- UPGRADE SHOP screen -->
+        <section id="screen-shop" class="screen">
+          <div class="shopPanel">
+            <div class="shopHeader">
+              <div class="shopHeaderCoin" aria-hidden="true"></div>
+              <div class="shopHeaderTitle" data-i18n="shop_title">UPGRADE SHOP</div>
+            </div>
+
+            <div class="shopList">
+              <div class="shopRow">
+                <div class="shopIcon siFunds" aria-hidden="true"></div>
+                <div class="shopMid">
+                  <div class="shopName" data-i18n="shop_item_1">Invest Funds</div>
+                  <div class="shopPrice" id="shopPrice1">100K</div>
+                </div>
+                <button class="buyBtn" id="buy1" type="button">
+                  <span data-i18n="buy_btn">BUY</span>
+                  <i class="miniCoin" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <div class="shopRow">
+                <div class="shopIcon siExpand" aria-hidden="true"></div>
+                <div class="shopMid">
+                  <div class="shopName" data-i18n="shop_item_2">Expand Business</div>
+                  <div class="shopPrice" id="shopPrice2">500K</div>
+                </div>
+                <button class="buyBtn" id="buy2" type="button">
+                  <span data-i18n="buy_btn">BUY</span>
+                  <i class="miniCoin" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <div class="shopRow">
+                <div class="shopIcon siManager" aria-hidden="true"></div>
+                <div class="shopMid">
+                  <div class="shopName" data-i18n="shop_item_3">Hire Manager</div>
+                  <div class="shopPrice" id="shopPrice3">1.5M</div>
+                </div>
+                <button class="buyBtn" id="buy3" type="button">
+                  <span data-i18n="buy_btn">BUY</span>
+                  <i class="miniCoin" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <div class="shopRow">
+                <div class="shopIcon siSummit" aria-hidden="true"></div>
+                <div class="shopMid">
+                  <div class="shopName" data-i18n="shop_item_4">Business Summit</div>
+                  <div class="shopPrice" id="shopPrice4">8.5M</div>
+                </div>
+                <button class="buyBtn" id="buy4" type="button">
+                  <span data-i18n="buy_btn">BUY</span>
+                  <i class="miniCoin" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <div class="shopRow">
+                <div class="shopIcon siGlobal" aria-hidden="true"></div>
+                <div class="shopMid">
+                  <div class="shopName" data-i18n="shop_item_5">Global Expansion</div>
+                  <div class="shopPrice" id="shopPrice5">35M</div>
+                </div>
+                <button class="buyBtn" id="buy5" type="button">
+                  <span data-i18n="buy_btn">BUY</span>
+                  <i class="miniCoin" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="shopHint" data-i18n="shop_hint">
+              Buy upgrades to speed up your empire growth.
+            </div>
+          </div>
+        </section>
+
+        <!-- REWARDS screen -->
+        <section id="screen-rewards" class="screen">
+          <div class="panel">
+            <div class="panelTitle" data-i18n="rewards_title">Rewards</div>
+
+            <div class="rewardCard">
+              <div class="rewardIcon" aria-hidden="true"></div>
+              <div class="rewardText">
+                <div class="rewardName" data-i18n="reward_boost_title">Watch Ad → x2 income for 3 minutes</div>
+                <div class="rewardSub" id="rewardSub">x2: 0:00</div>
+              </div>
+              <button class="rewardBtn" id="btnRewardBoost" type="button" data-i18n="reward_watch_btn">
+                WATCH
+              </button>
+            </div>
+
+            <div class="rewardCard">
+              <div class="rewardIcon riOffline" aria-hidden="true"></div>
+              <div class="rewardText">
+                <div class="rewardName" data-i18n="reward_offline_title">Offline income</div>
+                <div class="rewardSub" data-i18n="reward_offline_sub">Earn while you were away (up to 2 hours).</div>
+              </div>
+              <button class="rewardBtn ghost" id="btnShowOfflineInfo" type="button" data-i18n="reward_info_btn">
+                INFO
+              </button>
+            </div>
+
+            <div class="panelNote" data-i18n="ads_note">
+              Ads are optional and only give in-game bonuses.
+            </div>
+          </div>
+        </section>
+
+        <!-- SETTINGS screen -->
+        <section id="screen-settings" class="screen">
+          <div class="panel">
+            <div class="panelTitle" data-i18n="settings_title">Settings</div>
+
+            <div class="toggleRow">
+              <div class="toggleLeft">
+                <div class="toggleName" data-i18n="settings_sound">Sound</div>
+                <div class="toggleSub" data-i18n="settings_sound_sub">Click & upgrade sounds</div>
+              </div>
+              <button class="toggleBtn" id="toggleSound" type="button">ON</button>
+            </div>
+
+            <div class="toggleRow">
+              <div class="toggleLeft">
+                <div class="toggleName" data-i18n="settings_music">Music</div>
+                <div class="toggleSub" data-i18n="settings_music_sub">Background music</div>
+              </div>
+              <button class="toggleBtn" id="toggleMusic" type="button">OFF</button>
+            </div>
+
+            <div class="toggleRow">
+              <div class="toggleLeft">
+                <div class="toggleName" data-i18n="settings_lang">Language</div>
+                <div class="toggleSub" data-i18n="settings_lang_sub">Switch UI language</div>
+              </div>
+              <button class="toggleBtn" id="toggleLang" type="button">RU</button>
+            </div>
+
+            <div class="authBox">
+              <div class="authTitle" data-i18n="auth_title">Cloud Save</div>
+              <div class="authText" data-i18n="auth_text">
+                Sign in to sync progress across devices. Guest mode works without sign-in.
+              </div>
+
+              <div class="authRow">
+                <button class="authBtn" id="btnAuth" type="button" data-i18n="auth_btn">SIGN IN</button>
+                <div class="authStatus" id="authStatus">Guest</div>
+              </div>
+            </div>
+
+            <div class="panelNote small" data-i18n="settings_note">
+              Game pauses and mutes when tab is hidden or during ads.
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Bottom tab bar -->
+      <nav class="tabbar" aria-label="Tab bar">
+        <button class="tab active" id="tabHome" type="button" data-screen="click">
+          <div class="tabIcon tiHome" aria-hidden="true"></div>
+          <div class="tabLabel" data-i18n="tab_home">Home</div>
+        </button>
+        <button class="tab" id="tabShop" type="button" data-screen="shop">
+          <div class="tabIcon tiShop" aria-hidden="true"></div>
+          <div class="tabLabel" data-i18n="tab_shop">Shop</div>
+        </button>
+        <button class="tab" id="tabStats" type="button" data-screen="business">
+          <div class="tabIcon tiStats" aria-hidden="true"></div>
+          <div class="tabLabel" data-i18n="tab_stats">Stats</div>
+        </button>
+        <button class="tab" id="tabRewards" type="button" data-screen="rewards">
+          <div class="tabIcon tiRewards" aria-hidden="true"></div>
+          <div class="tabLabel" data-i18n="tab_rewards">Rewards</div>
+        </button>
+        <button class="tab" id="tabSettings" type="button" data-screen="settings">
+          <div class="tabIcon tiSettings" aria-hidden="true"></div>
+          <div class="tabLabel" data-i18n="tab_settings">Settings</div>
+        </button>
+      </nav>
+
+      <!-- FX overlay -->
+      <div id="fxLayer" class="fxLayer" aria-hidden="true"></div>
+
+      <!-- Modal -->
+      <div id="modalRoot" class="modalRoot hidden" aria-hidden="true">
+        <div class="modalBackdrop"></div>
+        <div class="modalCard" role="dialog" aria-modal="true" aria-label="Modal">
+          <div class="modalTitle" id="modalTitle">Offline Income</div>
+          <div class="modalBody" id="modalBody">You earned 0</div>
+          <div class="modalBtns">
+            <button class="modalBtn ghost" id="modalClose" type="button" data-i18n="close_btn">CLOSE</button>
+            <button class="modalBtn" id="modalAction" type="button">OK</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="sdk.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

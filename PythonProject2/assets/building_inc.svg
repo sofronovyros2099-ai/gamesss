@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="260" viewBox="0 0 200 260">
+  <rect x="28" y="60" width="144" height="170" rx="18" fill="#ffffff" opacity="0.95"></rect>
+  <rect x="38" y="70" width="124" height="150" rx="14" fill="#dff2ff"></rect>
+  <rect x="28" y="44" width="144" height="44" rx="16" fill="#3aa2ff"></rect>
+  <text x="100" y="74" text-anchor="middle" font-size="18" font-family="Arial" font-weight="900" fill="#fff">BUSINESS INC.</text>
+  <g fill="#7fc7ff" opacity="0.95">
+    <rect x="52" y="104" width="32" height="26" rx="6"></rect>
+    <rect x="92" y="104" width="32" height="26" rx="6"></rect>
+    <rect x="132" y="104" width="18" height="26" rx="6"></rect>
+    <rect x="52" y="140" width="32" height="26" rx="6"></rect>
+    <rect x="92" y="140" width="32" height="26" rx="6"></rect>
+    <rect x="132" y="140" width="18" height="26" rx="6"></rect>
+    <rect x="52" y="176" width="32" height="26" rx="6"></rect>
+    <rect x="92" y="176" width="32" height="26" rx="6"></rect>
+    <rect x="132" y="176" width="18" height="26" rx="6"></rect>
+  </g>
+</svg>
