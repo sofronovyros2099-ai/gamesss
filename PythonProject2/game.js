@@ -1,22 +1,14 @@
-/* game.js — Business Empire Idle (DOM+CSS), no external libs */
-
 (function () {
   "use strict";
 
-  /* =========================
-     Helpers
-  ========================= */
+  /* ========= Helpers ========= */
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const now = () => Date.now();
   const rand = (a, b) => a + Math.random() * (b - a);
 
-  function formatInt(n, lang) {
+  function formatIntRU(n) {
     const safe = Math.floor(Math.max(0, n));
-    // requirement: "12,345,678" or locale — we keep comma for en, space for ru
-    if (lang === "ru") {
-      return safe.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-    }
-    return safe.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return safe.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   }
 
   function formatTimeMMSS(sec) {
@@ -26,152 +18,23 @@
     return `${m}:${String(s).padStart(2, "0")}`;
   }
 
-  function humanPrice(n) {
-    // 1000->1K, 1e6->1.2M etc (simple)
+  function humanPriceRU(n) {
     const v = Math.max(0, n);
-    if (v >= 1e9) return (v / 1e9).toFixed(v >= 1e10 ? 0 : 1) + "B";
-    if (v >= 1e6) return (v / 1e6).toFixed(v >= 1e7 ? 0 : 1) + "M";
-    if (v >= 1e3) return (v / 1e3).toFixed(v >= 1e4 ? 0 : 1) + "K";
+    if (v >= 1e9) return (v / 1e9).toFixed(v >= 1e10 ? 0 : 1).replace(".", ",") + "B";
+    if (v >= 1e6) return (v / 1e6).toFixed(v >= 1e7 ? 0 : 1).replace(".", ",") + "M";
+    if (v >= 1e3) return (v / 1e3).toFixed(v >= 1e4 ? 0 : 1).replace(".", ",") + "K";
     return String(Math.floor(v));
   }
 
-  /* =========================
-     Localization (RU/EN)
-  ========================= */
-  const I18N = {
-    ru: {
-      tab_home: "Home",
-      tab_shop: "Shop",
-      tab_stats: "Stats",
-      tab_rewards: "Rewards",
-      tab_settings: "Settings",
+  function todayKey() {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
 
-      upgrade_income_title: "Increase Income",
-      upgrade_boost_title: "Business Boost",
-      upgrade_auto_title: "Auto Collect",
-      upgrade_btn: "UPGRADE",
-
-      shop_title: "UPGRADE SHOP",
-      shop_item_1: "Invest Funds",
-      shop_item_2: "Expand Business",
-      shop_item_3: "Hire Manager",
-      shop_item_4: "Business Summit",
-      shop_item_5: "Global Expansion",
-      buy_btn: "BUY",
-      shop_hint: "Покупки ускоряют рост вашей империи.",
-
-      rewards_title: "Rewards",
-      reward_boost_title: "Смотреть рекламу → x2 доход на 3 минуты",
-      reward_watch_btn: "СМОТРЕТЬ",
-      reward_offline_title: "Офлайн доход",
-      reward_offline_sub: "Заработок пока вас не было (до 2 часов).",
-      reward_info_btn: "ИНФО",
-      ads_note: "Реклама необязательна и даёт только внутриигровые бонусы.",
-
-      settings_title: "Settings",
-      settings_sound: "Звук",
-      settings_sound_sub: "Клики и апгрейды",
-      settings_music: "Музыка",
-      settings_music_sub: "Фоновая музыка",
-      settings_lang: "Язык",
-      settings_lang_sub: "Переключить язык UI",
-      settings_note: "Игра ставится на паузу и выключает звук при скрытии вкладки и во время рекламы.",
-
-      auth_title: "Облачный прогресс",
-      auth_text: "Войдите, чтобы синхронизировать прогресс на разных устройствах. Гостевой режим работает без входа.",
-      auth_btn: "ВОЙТИ",
-
-      stats_title: "Stats",
-      stat_total_clicks: "Кликов всего",
-      stat_income_ps: "Доход / сек",
-      stat_click_value: "Доход за клик",
-      stat_play_time: "Время в игре",
-      stat_business_level: "Уровень бизнеса",
-
-      biz_upgrade_btn: "UPGRADE",
-
-      close_btn: "ЗАКРЫТЬ",
-
-      modal_offline_title: "Офлайн доход",
-      modal_offline_body: "Пока вас не было, вы заработали: {x}",
-      modal_offline_action: "УДВОИТЬ ЗА РЕКЛАМУ",
-
-      modal_info_title: "Офлайн доход",
-      modal_info_body: "Офлайн доход начисляется при входе, максимум за 2 часа.",
-      modal_ok: "OK",
-
-      guest: "Гость",
-      signed: "Вход выполнен"
-    },
-    en: {
-      tab_home: "Home",
-      tab_shop: "Shop",
-      tab_stats: "Stats",
-      tab_rewards: "Rewards",
-      tab_settings: "Settings",
-
-      upgrade_income_title: "Increase Income",
-      upgrade_boost_title: "Business Boost",
-      upgrade_auto_title: "Auto Collect",
-      upgrade_btn: "UPGRADE",
-
-      shop_title: "UPGRADE SHOP",
-      shop_item_1: "Invest Funds",
-      shop_item_2: "Expand Business",
-      shop_item_3: "Hire Manager",
-      shop_item_4: "Business Summit",
-      shop_item_5: "Global Expansion",
-      buy_btn: "BUY",
-      shop_hint: "Buy upgrades to speed up your empire growth.",
-
-      rewards_title: "Rewards",
-      reward_boost_title: "Watch Ad → x2 income for 3 minutes",
-      reward_watch_btn: "WATCH",
-      reward_offline_title: "Offline income",
-      reward_offline_sub: "Earn while you were away (up to 2 hours).",
-      reward_info_btn: "INFO",
-      ads_note: "Ads are optional and only give in-game bonuses.",
-
-      settings_title: "Settings",
-      settings_sound: "Sound",
-      settings_sound_sub: "Clicks & upgrades",
-      settings_music: "Music",
-      settings_music_sub: "Background music",
-      settings_lang: "Language",
-      settings_lang_sub: "Switch UI language",
-      settings_note: "Game pauses and mutes when tab is hidden and during ads.",
-
-      auth_title: "Cloud Save",
-      auth_text: "Sign in to sync progress across devices. Guest mode works without sign-in.",
-      auth_btn: "SIGN IN",
-
-      stats_title: "Stats",
-      stat_total_clicks: "Total Clicks",
-      stat_income_ps: "Income / sec",
-      stat_click_value: "Click Value",
-      stat_play_time: "Play Time",
-      stat_business_level: "Business Level",
-
-      biz_upgrade_btn: "UPGRADE",
-
-      close_btn: "CLOSE",
-
-      modal_offline_title: "Offline Income",
-      modal_offline_body: "While you were away, you earned: {x}",
-      modal_offline_action: "DOUBLE FOR AD",
-
-      modal_info_title: "Offline Income",
-      modal_info_body: "Offline income is granted on launch, up to 2 hours maximum.",
-      modal_ok: "OK",
-
-      guest: "Guest",
-      signed: "Signed in"
-    }
-  };
-
-  /* =========================
-     Audio (simple WebAudio)
-  ========================= */
+  /* ========= Audio ========= */
   class AudioManager {
     constructor() {
       this.enabled = true;
@@ -179,9 +42,7 @@
       this.ctx = null;
       this._mutedBySystem = false;
       this._musicOsc = null;
-      this._musicGain = null;
     }
-
     _ensureCtx() {
       if (!this.ctx) {
         const AC = window.AudioContext || window.webkitAudioContext;
@@ -190,14 +51,12 @@
       }
       return this.ctx;
     }
-
     setEnabled(v) { this.enabled = !!v; }
     setMusicEnabled(v) {
       this.musicEnabled = !!v;
       if (!this.musicEnabled) this.stopMusic();
       else this.startMusic();
     }
-
     async resumeIfNeeded() {
       const ctx = this._ensureCtx();
       if (!ctx) return;
@@ -205,17 +64,14 @@
         try { await ctx.resume(); } catch (_) {}
       }
     }
-
     stopAllOnPause() {
       this._mutedBySystem = true;
       this.stopMusic();
     }
-
     resumeAllOnFocus() {
       this._mutedBySystem = false;
       if (this.musicEnabled) this.startMusic();
     }
-
     _beep(freq, dur, type = "sine", vol = 0.05) {
       if (!this.enabled || this._mutedBySystem) return;
       const ctx = this._ensureCtx();
@@ -237,9 +93,8 @@
       o.start();
       o.stop(t + dur + 0.02);
     }
-
     playClick() { this._beep(520, 0.06, "triangle", 0.06); }
-    playUpgrade() { this._beep(740, 0.09, "square", 0.045); }
+    playUpgrade() { this._beep(760, 0.09, "square", 0.045); }
 
     startMusic() {
       if (!this.musicEnabled || this._mutedBySystem) return;
@@ -250,14 +105,13 @@
       const o = ctx.createOscillator();
       const g = ctx.createGain();
       o.type = "sine";
-      o.frequency.value = 196; // mellow
-      g.gain.value = 0.015;
+      o.frequency.value = 196;
+      g.gain.value = 0.014;
 
-      // tiny LFO for vibe
       const lfo = ctx.createOscillator();
       const lfoG = ctx.createGain();
-      lfo.frequency.value = 0.25;
-      lfoG.gain.value = 18;
+      lfo.frequency.value = 0.22;
+      lfoG.gain.value = 14;
       lfo.connect(lfoG);
       lfoG.connect(o.frequency);
 
@@ -267,131 +121,256 @@
       o.start();
       lfo.start();
 
-      this._musicOsc = { o, lfo };
-      this._musicGain = g;
+      this._musicOsc = { o, lfo, g };
     }
-
     stopMusic() {
       if (!this._musicOsc) return;
       try { this._musicOsc.o.stop(); } catch (_) {}
       try { this._musicOsc.lfo.stop(); } catch (_) {}
       this._musicOsc = null;
-      this._musicGain = null;
     }
   }
 
-  /* =========================
-     Save Manager
-  ========================= */
+  /* ========= Save ========= */
   class SaveManager {
     constructor(game) {
       this.game = game;
-      this.key = "be_idle_save_v1";
+      this.key = "be_idle_save_v2_ru";
       this._debounceTimer = null;
     }
-
     loadLocal() {
       try {
         const s = localStorage.getItem(this.key);
         if (!s) return null;
         return JSON.parse(s);
-      } catch (_) {
-        return null;
-      }
+      } catch (_) { return null; }
     }
-
     saveLocal(stateObj) {
-      try {
-        localStorage.setItem(this.key, JSON.stringify(stateObj));
-        return true;
-      } catch (_) {
-        return false;
-      }
-    }
-
-    async cloudLoad() {
-      try { return await window.YGSDK.cloudLoad(); }
-      catch (_) { return null; }
-    }
-
-    async cloudSave(stateObj) {
-      try { return await window.YGSDK.cloudSave(stateObj); }
+      try { localStorage.setItem(this.key, JSON.stringify(stateObj)); return true; }
       catch (_) { return false; }
     }
-
+    async cloudLoad() { try { return await window.YGSDK.cloudLoad(); } catch (_) { return null; } }
+    async cloudSave(stateObj) { try { return await window.YGSDK.cloudSave(stateObj); } catch (_) { return false; } }
     requestSave() {
-      // debounce
       if (this._debounceTimer) clearTimeout(this._debounceTimer);
       this._debounceTimer = setTimeout(() => this.saveNow(), 250);
     }
-
     async saveNow() {
       const data = this.game.exportState();
       this.saveLocal(data);
-
-      // cloud if auth
       if (window.YGSDK && window.YGSDK.isAuthenticated && window.YGSDK.isAuthenticated()) {
         await this.cloudSave(data);
       }
     }
   }
 
-  /* =========================
-     Ads Manager
-  ========================= */
+  /* ========= Ads ========= */
   class AdsManager {
     constructor(game) {
       this.game = game;
       this.lastInterstitialAt = 0;
       this.cooldownMs = 90_000;
     }
-
-    async showInterstitial(reason) {
+    async showInterstitial() {
       const t = now();
       if (t - this.lastInterstitialAt < this.cooldownMs) return false;
-
       this.lastInterstitialAt = t;
-      await this._withAdPause(async () => {
-        await window.YGSDK.showInterstitial();
-      });
+
+      await this._withAdPause(async () => { await window.YGSDK.showInterstitial(); });
       return true;
     }
-
     async showRewarded(onReward) {
       let rewarded = false;
       await this._withAdPause(async () => {
         const res = await window.YGSDK.showRewarded();
         rewarded = !!(res && res.rewarded);
       });
-
-      if (rewarded && typeof onReward === "function") {
-        onReward();
-      }
+      if (rewarded && typeof onReward === "function") onReward();
       return rewarded;
     }
-
     async _withAdPause(fn) {
       this.game.pause("ad");
       this.game.audio.stopAllOnPause();
-      try {
-        await fn();
-      } finally {
+      try { await fn(); }
+      finally {
         this.game.audio.resumeAllOnFocus();
         this.game.resume("ad");
       }
     }
   }
 
-  /* =========================
-     UI Manager
-  ========================= */
+  /* ========= FX (живые монеты) ========= */
+  class FXSystem {
+    constructor(stage, fxLayer, getMoneyTarget) {
+      this.stage = stage;
+      this.layer = fxLayer;
+      this.getMoneyTarget = getMoneyTarget;
+
+      this.coins = []; // {el, t, life, x,y, vx,vy, rot, vr, mode, ax,ay, targetX,targetY, c1x,c1y,c2x,c2y}
+      this.pops = [];  // {el, t, life, x,y}
+      this.maxCoins = 60;
+    }
+
+    stagePointFromClient(clientX, clientY) {
+      const rect = this.stage.getBoundingClientRect();
+      const sx = 470, sy = 930;
+      const x = (clientX - rect.left) / (rect.width / sx);
+      const y = (clientY - rect.top) / (rect.height / sy);
+      return { x, y };
+    }
+
+    spawnPop(x, y, text) {
+      const el = document.createElement("div");
+      el.className = "fxPop";
+      el.textContent = text;
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      this.layer.appendChild(el);
+      this.pops.push({ el, t: 0, life: 0.85, x, y });
+      if (this.pops.length > 16) {
+        const p = this.pops.shift();
+        p.el.remove();
+      }
+    }
+
+    // “дугой” в moneybar + вращение
+    spawnCoinArcToMoney(x, y, count) {
+      const target = this.getMoneyTarget(); // stage coords
+      for (let i = 0; i < count; i++) {
+        if (this.coins.length >= this.maxCoins) {
+          const c = this.coins.shift();
+          c.el.remove();
+        }
+        const el = document.createElement("div");
+        el.className = "fxCoin";
+        this.layer.appendChild(el);
+
+        const startX = x + rand(-14, 14);
+        const startY = y + rand(-10, 10);
+
+        // bezier control points to create nice arc
+        const c1x = startX + rand(-80, 80);
+        const c1y = startY + rand(-160, -60);
+        const c2x = (target.x + startX) / 2 + rand(-90, 90);
+        const c2y = (target.y + startY) / 2 + rand(-120, -40);
+
+        const life = rand(0.55, 0.75);
+
+        this.coins.push({
+          el, t: 0, life,
+          mode: "bezier",
+          x: startX, y: startY,
+          rot: rand(0, Math.PI * 2),
+          vr: rand(-10, 10),
+          targetX: target.x + rand(-10, 10),
+          targetY: target.y + rand(-6, 6),
+          c1x, c1y, c2x, c2y
+        });
+      }
+    }
+
+    // монеты “в воздухе” (параболы) для business screen
+    spawnAmbientCoin() {
+      if (this.coins.length >= this.maxCoins) return;
+      const el = document.createElement("div");
+      el.className = "fxCoin";
+      el.style.width = "36px";
+      el.style.height = "36px";
+      this.layer.appendChild(el);
+
+      const x = rand(-20, 490);
+      const y = rand(120, 360);
+      const vx = rand(-35, 35);
+      const vy = rand(-110, -60);
+      const life = rand(1.2, 1.6);
+
+      this.coins.push({
+        el, t: 0, life,
+        mode: "physics",
+        x, y, vx, vy,
+        ax: 0,
+        ay: 220, // gravity
+        rot: rand(0, Math.PI * 2),
+        vr: rand(-6, 6)
+      });
+    }
+
+    update(dt) {
+      // pops
+      for (let i = this.pops.length - 1; i >= 0; i--) {
+        const p = this.pops[i];
+        p.t += dt;
+        const k = clamp(p.t / p.life, 0, 1);
+        const y = p.y - 70 * k;
+        const s = 0.92 + 0.12 * Math.sin(k * Math.PI);
+        const a = 1 - k;
+        p.el.style.transform = `translate(${0}px, ${y - p.y}px) scale(${s})`;
+        p.el.style.opacity = `${a}`;
+        if (p.t >= p.life) {
+          p.el.remove();
+          this.pops.splice(i, 1);
+        }
+      }
+
+      // coins
+      for (let i = this.coins.length - 1; i >= 0; i--) {
+        const c = this.coins[i];
+        c.t += dt;
+        const k = clamp(c.t / c.life, 0, 1);
+
+        if (c.mode === "bezier") {
+          // cubic bezier
+          const x = cubicBezier(c.x, c.c1x, c.c2x, c.targetX, k);
+          const y = cubicBezier(c.y, c.c1y, c.c2y, c.targetY, k);
+          c.rot += c.vr * dt;
+
+          const scale = 0.85 + 0.35 * (1 - Math.abs(0.5 - k) * 2); // slightly bigger mid
+          const alpha = 1 - k;
+          c.el.style.left = `${x}px`;
+          c.el.style.top = `${y}px`;
+          c.el.style.transform = `rotate(${c.rot}rad) scale(${scale})`;
+          c.el.style.opacity = `${alpha}`;
+        } else {
+          // physics
+          c.vx += (c.ax || 0) * dt;
+          c.vy += (c.ay || 0) * dt;
+          c.x += c.vx * dt;
+          c.y += c.vy * dt;
+          c.rot += c.vr * dt;
+
+          const alpha = 1 - k;
+          const scale = 0.95 + 0.05 * Math.sin(k * Math.PI);
+          c.el.style.left = `${c.x}px`;
+          c.el.style.top = `${c.y}px`;
+          c.el.style.transform = `rotate(${c.rot}rad) scale(${scale})`;
+          c.el.style.opacity = `${alpha}`;
+        }
+
+        if (c.t >= c.life) {
+          c.el.remove();
+          this.coins.splice(i, 1);
+        }
+      }
+    }
+  }
+
+  function cubicBezier(p0, p1, p2, p3, t) {
+    const u = 1 - t;
+    return (u*u*u)*p0 + 3*(u*u)*t*p1 + 3*u*(t*t)*p2 + (t*t*t)*p3;
+  }
+
+  /* ========= UI ========= */
   class UIManager {
     constructor(game) {
       this.game = game;
 
-      this.moneyValue = document.getElementById("moneyValue");
-      this.fx = document.getElementById("fxLayer");
+      this.stage = document.getElementById("stage");
+      this.fxLayer = document.getElementById("fxLayer");
 
+      this.moneyValue = document.getElementById("moneyValue");
+      this.bigCoinBtn = document.getElementById("bigCoinBtn");
+
+      // screens
       this.screens = {
         click: document.getElementById("screen-click"),
         business: document.getElementById("screen-business"),
@@ -402,27 +381,27 @@
 
       this.tabs = Array.from(document.querySelectorAll(".tabbar .tab"));
 
-      this.bigCoinBtn = document.getElementById("bigCoinBtn");
-
-      // upgrades UI
+      // upgrade
       this.lvlIncome = document.getElementById("lvl-income");
       this.lvlBoost = document.getElementById("lvl-boost");
       this.lvlAuto = document.getElementById("lvl-auto");
+      this.costIncome = document.getElementById("cost-income");
+      this.costBoost = document.getElementById("cost-boost");
+      this.costAuto = document.getElementById("cost-auto");
 
       this.btnIncome = document.getElementById("btn-income");
       this.btnBoost = document.getElementById("btn-boost");
       this.btnAuto = document.getElementById("btn-auto");
 
-      // business UI
+      // business
       this.progressFill = document.getElementById("progressFill");
       this.progressLabel = document.getElementById("progressLabel");
       this.bizUpgradeBtn = document.getElementById("bizUpgradeBtn");
       this.pill1 = document.getElementById("pill1");
       this.pill2 = document.getElementById("pill2");
       this.pill3 = document.getElementById("pill3");
-      this.skyCoins = document.getElementById("bizSkyCoins");
 
-      // stats UI
+      // stats
       this.statClicks = document.getElementById("statClicks");
       this.statIPS = document.getElementById("statIPS");
       this.statCV = document.getElementById("statCV");
@@ -434,10 +413,13 @@
       this.rewardSub = document.getElementById("rewardSub");
       this.btnShowOfflineInfo = document.getElementById("btnShowOfflineInfo");
 
+      // daily
+      this.btnDaily = document.getElementById("btnDaily");
+      this.dailySub = document.getElementById("dailySub");
+
       // settings
       this.toggleSound = document.getElementById("toggleSound");
       this.toggleMusic = document.getElementById("toggleMusic");
-      this.toggleLang = document.getElementById("toggleLang");
       this.btnAuth = document.getElementById("btnAuth");
       this.authStatus = document.getElementById("authStatus");
 
@@ -448,23 +430,38 @@
       this.modalClose = document.getElementById("modalClose");
       this.modalAction = document.getElementById("modalAction");
 
-      // shop buy buttons
+      // shop
       this.buyBtns = [
         document.getElementById("buy1"),
         document.getElementById("buy2"),
         document.getElementById("buy3"),
         document.getElementById("buy4"),
-        document.getElementById("buy5"),
+        document.getElementById("buy5")
       ];
       this.shopPrices = [
         document.getElementById("shopPrice1"),
         document.getElementById("shopPrice2"),
         document.getElementById("shopPrice3"),
         document.getElementById("shopPrice4"),
-        document.getElementById("shopPrice5"),
+        document.getElementById("shopPrice5")
       ];
 
+      // FX system (target is coin badge in moneybar)
+      this.fx = new FXSystem(this.stage, this.fxLayer, () => this.getMoneyTargetPoint());
+
       this._bind();
+    }
+
+    getMoneyTargetPoint() {
+      const stageRect = this.stage.getBoundingClientRect();
+      const badge = document.querySelector(".coinBadge");
+      const b = badge.getBoundingClientRect();
+
+      // convert to stage coords
+      const sx = 470, sy = 930;
+      const x = ((b.left + b.width * 0.55) - stageRect.left) / (stageRect.width / sx);
+      const y = ((b.top + b.height * 0.50) - stageRect.top) / (stageRect.height / sy);
+      return { x, y };
     }
 
     _bind() {
@@ -476,15 +473,17 @@
         });
       });
 
-      // big coin
+      // disable context menu
+      document.addEventListener("contextmenu", e => e.preventDefault());
+
+      // big coin press anim
       const press = () => this.bigCoinBtn.classList.add("pressed");
       const release = () => this.bigCoinBtn.classList.remove("pressed");
+      this.bigCoinBtn.addEventListener("pointerdown", press);
+      this.bigCoinBtn.addEventListener("pointerup", release);
+      this.bigCoinBtn.addEventListener("pointercancel", release);
 
-      this.bigCoinBtn.addEventListener("pointerdown", () => { press(); });
-      this.bigCoinBtn.addEventListener("pointerup", () => { release(); });
-      this.bigCoinBtn.addEventListener("pointercancel", () => { release(); });
       this.bigCoinBtn.addEventListener("click", (e) => {
-        // ensure audio can start on first user gesture
         this.game.audio.resumeIfNeeded();
         this.game.onTapCoin(e);
       });
@@ -501,21 +500,21 @@
       this.btnRewardBoost.addEventListener("click", () => this.game.rewardBoost());
       this.btnShowOfflineInfo.addEventListener("click", () => {
         this.showModal(
-          this.game.t("modal_info_title"),
-          this.game.t("modal_info_body"),
-          { actionText: this.game.t("modal_ok"), onAction: () => this.hideModal() }
+          "Офлайн доход",
+          "Офлайн доход начисляется при входе, максимум за 2 часа.",
+          { actionText: "OK", onAction: () => this.hideModal() }
         );
       });
 
-      // settings toggles
+      // daily
+      this.btnDaily.addEventListener("click", () => this.game.claimDailyReward());
+
+      // settings
       this.toggleSound.addEventListener("click", () => this.game.toggleSound());
       this.toggleMusic.addEventListener("click", () => this.game.toggleMusic());
-      this.toggleLang.addEventListener("click", () => this.game.toggleLang());
-
-      // auth
       this.btnAuth.addEventListener("click", () => this.game.requestAuth());
 
-      // modal buttons
+      // modal
       this.modalClose.addEventListener("click", () => this.hideModal());
       this.modalAction.addEventListener("click", () => {
         const fn = this.modalAction._onAction;
@@ -523,74 +522,63 @@
       });
     }
 
-    applyI18n(lang) {
-      document.documentElement.lang = (lang === "ru" ? "ru" : "en");
-      document.querySelectorAll("[data-i18n]").forEach(el => {
-        const key = el.getAttribute("data-i18n");
-        const text = this.game.t(key);
-        if (text != null) el.textContent = text;
-      });
-    }
-
-    setActiveTab(screen) {
-      this.tabs.forEach(t => t.classList.remove("active"));
-      const btn = this.tabs.find(b => (b.getAttribute("data-screen") === screen));
-      if (btn) btn.classList.add("active");
-    }
-
     switchScreen(screen) {
       Object.keys(this.screens).forEach(k => {
         this.screens[k].classList.toggle("active", k === screen);
       });
-      this.setActiveTab(screen);
+      this.tabs.forEach(t => t.classList.remove("active"));
+      const btn = this.tabs.find(b => b.getAttribute("data-screen") === screen);
+      if (btn) btn.classList.add("active");
     }
 
     updateMoneyBar() {
-      this.moneyValue.textContent = formatInt(this.game.state.money, this.game.state.lang);
+      this.moneyValue.textContent = formatIntRU(this.game.state.money);
     }
 
     updateUpgradeCards() {
       const s = this.game.state;
-      this.lvlIncome.textContent = `Lv. ${s.upgradeLevels.income}`;
-      this.lvlBoost.textContent = `Lv. ${s.upgradeLevels.boost}`;
-      this.lvlAuto.textContent = `Lv. ${s.upgradeLevels.auto}`;
 
-      this.btnIncome.disabled = s.money < this.game.getUpgradeCost("income");
-      this.btnBoost.disabled = s.money < this.game.getUpgradeCost("boost");
-      this.btnAuto.disabled = s.money < this.game.getUpgradeCost("auto");
+      const ci = this.game.getUpgradeCost("income");
+      const cb = this.game.getUpgradeCost("boost");
+      const ca = this.game.getUpgradeCost("auto");
 
-      // show costs subtly in title attribute
-      this.btnIncome.title = `${humanPrice(this.game.getUpgradeCost("income"))}`;
-      this.btnBoost.title = `${humanPrice(this.game.getUpgradeCost("boost"))}`;
-      this.btnAuto.title = `${humanPrice(this.game.getUpgradeCost("auto"))}`;
+      this.lvlIncome.textContent = `Ур. ${s.upgradeLevels.income}`;
+      this.lvlBoost.textContent = `Ур. ${s.upgradeLevels.boost}`;
+      this.lvlAuto.textContent = `Ур. ${s.upgradeLevels.auto}`;
+
+      this.costIncome.textContent = `Цена: ${humanPriceRU(ci)}`;
+      this.costBoost.textContent = `Цена: ${humanPriceRU(cb)}`;
+      this.costAuto.textContent = `Цена: ${humanPriceRU(ca)}`;
+
+      this.btnIncome.disabled = s.money < ci;
+      this.btnBoost.disabled = s.money < cb;
+      this.btnAuto.disabled = s.money < ca;
     }
 
     updateBusinessProgress() {
       const s = this.game.state;
-      const pct = (s.businessProgressGoal > 0) ? (s.businessProgress / s.businessProgressGoal) : 0;
+      const pct = s.businessProgressGoal > 0 ? (s.businessProgress / s.businessProgressGoal) : 0;
       this.progressFill.style.width = `${clamp(pct, 0, 1) * 100}%`;
-      this.progressLabel.textContent = `${formatInt(s.businessProgress, s.lang)}/${formatInt(s.businessProgressGoal, s.lang)}`;
+      this.progressLabel.textContent = `${formatIntRU(s.businessProgress)}/${formatIntRU(s.businessProgressGoal)}`;
 
-      // stage pills like reference (Lv1->Lv5->Lv10)
       const bl = s.businessLevel;
       this.pill1.classList.toggle("active", bl < 5);
       this.pill2.classList.toggle("active", bl >= 5 && bl < 10);
       this.pill3.classList.toggle("active", bl >= 10);
 
-      // buildings: simple emphasis by opacity per level
       const shop = document.getElementById("bldShop");
       const inc = document.getElementById("bldInc");
       const corp = document.getElementById("bldCorp");
-      shop.style.opacity = (bl < 5) ? "1" : "0.75";
-      inc.style.opacity = (bl >= 5 && bl < 10) ? "1" : "0.75";
-      corp.style.opacity = (bl >= 10) ? "1" : "0.75";
+      shop.style.opacity = (bl < 5) ? "1" : "0.78";
+      inc.style.opacity = (bl >= 5 && bl < 10) ? "1" : "0.78";
+      corp.style.opacity = (bl >= 10) ? "1" : "0.78";
     }
 
     updateStats() {
       const s = this.game.state;
-      this.statClicks.textContent = formatInt(s.totalClicks, s.lang);
-      this.statIPS.textContent = formatInt(this.game.getIncomePerSecondEffective(), s.lang);
-      this.statCV.textContent = formatInt(this.game.getClickValueEffective(), s.lang);
+      this.statClicks.textContent = formatIntRU(s.totalClicks);
+      this.statIPS.textContent = formatIntRU(this.game.getIncomePerSecondEffective());
+      this.statCV.textContent = formatIntRU(this.game.getClickValueEffective());
       this.statPT.textContent = formatTimeMMSS(s.playTimeSeconds);
       this.statBL.textContent = String(s.businessLevel);
     }
@@ -605,33 +593,32 @@
         this.rewardSub.textContent = `x2: 0:00`;
         this.btnRewardBoost.disabled = false;
       }
+
+      const canDaily = this.game.isDailyAvailable();
+      this.dailySub.textContent = canDaily ? "Доступно: да" : "Доступно: завтра";
+      this.btnDaily.disabled = !canDaily;
     }
 
     updateSettings() {
       const s = this.game.state;
-      // sound
+
       this.toggleSound.textContent = s.audioEnabled ? "ON" : "OFF";
       this.toggleSound.classList.toggle("off", !s.audioEnabled);
 
-      // music
       this.toggleMusic.textContent = s.musicEnabled ? "ON" : "OFF";
       this.toggleMusic.classList.toggle("off", !s.musicEnabled);
 
-      // lang
-      this.toggleLang.textContent = (s.lang || "en").toUpperCase();
-
-      // auth status
       if (window.YGSDK && window.YGSDK.isAuthenticated && window.YGSDK.isAuthenticated()) {
-        this.authStatus.textContent = this.game.t("signed");
+        this.authStatus.textContent = "Вход выполнен";
       } else {
-        this.authStatus.textContent = this.game.t("guest");
+        this.authStatus.textContent = "Гость";
       }
     }
 
     updateShop() {
       const costs = this.game.getShopCosts();
       for (let i = 0; i < 5; i++) {
-        this.shopPrices[i].textContent = humanPrice(costs[i]);
+        this.shopPrices[i].textContent = humanPriceRU(costs[i]);
         this.buyBtns[i].disabled = this.game.state.money < costs[i];
       }
     }
@@ -646,69 +633,17 @@
       this.updateShop();
     }
 
-    spawnCoinBurst(x, y, amount = 6) {
-      for (let i = 0; i < amount; i++) {
-        const el = document.createElement("div");
-        el.className = "fxCoin";
-        const dx = rand(-120, 120);
-        const dy = rand(-160, -40);
-        el.style.setProperty("--dx", `${dx}px`);
-        el.style.setProperty("--dy", `${dy}px`);
-        el.style.left = `${x - 22 + rand(-12, 12)}px`;
-        el.style.top = `${y - 22 + rand(-12, 12)}px`;
-        this.fx.appendChild(el);
-        setTimeout(() => el.remove(), 800);
-      }
-    }
-
-    spawnPopText(x, y, text) {
-      const el = document.createElement("div");
-      el.className = "fxPop";
-      el.textContent = text;
-      el.style.left = `${x}px`;
-      el.style.top = `${y}px`;
-      this.fx.appendChild(el);
-      setTimeout(() => el.remove(), 900);
-    }
-
-    // ambient coins on business screen
-    spawnSkyCoin() {
-      const coin = document.createElement("div");
-      coin.className = "fxCoin";
-      coin.style.width = "38px";
-      coin.style.height = "38px";
-
-      const startX = rand(-40, 470);
-      const startY = rand(0, 140);
-
-      coin.style.left = `${startX}px`;
-      coin.style.top = `${startY}px`;
-
-      const dx = rand(-60, 60);
-      const dy = rand(40, 140);
-      coin.style.setProperty("--dx", `${dx}px`);
-      coin.style.setProperty("--dy", `${dy}px`);
-      coin.style.animationDuration = "1200ms";
-      this.skyCoins.appendChild(coin);
-      setTimeout(() => coin.remove(), 1400);
-    }
-
     showModal(title, body, opts = {}) {
       this.modalRoot.classList.remove("hidden");
       this.modalRoot.setAttribute("aria-hidden", "false");
       this.modalTitle.textContent = title;
       this.modalBody.textContent = body;
 
-      // action button
-      const actionText = opts.actionText || this.game.t("modal_ok") || "OK";
+      const actionText = opts.actionText || "OK";
       this.modalAction.textContent = actionText;
       this.modalAction._onAction = (opts.onAction || (() => this.hideModal()));
 
-      if (opts.hideAction) {
-        this.modalAction.style.display = "none";
-      } else {
-        this.modalAction.style.display = "inline-flex";
-      }
+      this.modalAction.style.display = opts.hideAction ? "none" : "inline-flex";
     }
 
     hideModal() {
@@ -718,9 +653,7 @@
     }
   }
 
-  /* =========================
-     Game
-  ========================= */
+  /* ========= Game ========= */
   class Game {
     constructor() {
       this.state = this._defaultState();
@@ -735,14 +668,11 @@
       this._lastFrameAt = now();
       this._accumSaveTime = 0;
 
-      // progression config
-      this._businessMaxLevel = 20; // 15–20+ levels requirement
+      this._businessMaxLevel = 20;
       this._interstitialEveryLevels = 3;
 
-      // for interstitial when entering business screen
       this._enteredBusinessAt = 0;
 
-      // bind
       this._onVisibility = this._onVisibility.bind(this);
       this._onBlur = this._onBlur.bind(this);
       this._onFocus = this._onFocus.bind(this);
@@ -763,66 +693,43 @@
 
         businessLevel: 1,
         businessProgress: 0,
-        businessProgressGoal: 200, // fast first minute
+        businessProgressGoal: 180, // чуть быстрее старт, как реф
 
         activeScreen: "click",
 
         audioEnabled: true,
         musicEnabled: false,
-        lang: "en",
 
         rewardBoostActive: false,
         rewardBoostEndTime: 0,
 
-        // save timestamps
-        lastSaveTimestamp: 0,
         lastExitTimestamp: now(),
 
-        // shop purchases count
-        shopBuys: [0, 0, 0, 0, 0]
+        shopBuys: [0, 0, 0, 0, 0],
+
+        // Daily reward
+        dailyLastClaim: "",   // "YYYY-MM-DD"
+        dailyStreak: 0
       };
     }
 
-    t(key) {
-      const lang = (this.state.lang === "ru") ? "ru" : "en";
-      return (I18N[lang] && I18N[lang][key]) != null ? I18N[lang][key] : key;
-    }
-
     async init() {
-      // Prevent context menu
+      // no scroll / no swipe refresh
+      document.addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
       document.addEventListener("contextmenu", (e) => e.preventDefault());
 
-      // prevent scroll / swipe refresh
-      document.addEventListener("touchmove", (e) => {
-        // do not block inside inputs (none used)
-        e.preventDefault();
-      }, { passive: false });
-
-      // SDK init
       await window.YGSDK.initSDK();
 
-      // language auto from SDK
-      const autoLang = window.YGSDK.getLang();
-      this.state.lang = autoLang;
-
-      // load local save first (guest)
+      // load guest save
       const local = this.save.loadLocal();
       if (local) this.importState(local);
 
-      // if already auth (rare), try cloud override (we still follow explicit auth rule for login; so no auto auth)
-      // -> no auto cloud load without auth.
-
-      // apply audio flags
       this.audio.setEnabled(this.state.audioEnabled);
       this.audio.setMusicEnabled(this.state.musicEnabled);
 
-      // UI
       this.ui = new UIManager(this);
-      this.ui.applyI18n(this.state.lang);
-      this.ui.switchScreen(this.state.activeScreen);
-      this.ui.updateAll();
 
-      // SDK pause/resume hooks (platform)
+      // SDK pause/resume
       window.YGSDK.onPause(() => this.pause("sdk"));
       window.YGSDK.onResume(() => this.resume("sdk"));
 
@@ -835,20 +742,34 @@
       window.addEventListener("resize", this._onResize);
       this._onResize();
 
+      // bind shop buy buttons
+      const buyIds = ["buy1", "buy2", "buy3", "buy4", "buy5"];
+      buyIds.forEach((id, i) => document.getElementById(id).addEventListener("click", () => this.buyShopItem(i)));
+
       // offline income
       this._applyOfflineIncome();
 
-      // Start gameplay API once playable
+      // ready
       window.YGSDK.ready();
       window.YGSDK.gameplayStart();
 
-      // start loop
+      // initial
+      this.ui.switchScreen(this.state.activeScreen);
+      this.ui.updateAll();
+
+      // loop
       this._lastFrameAt = now();
       requestAnimationFrame(this._tick);
+
+      // before unload
+      window.addEventListener("beforeunload", () => {
+        this.state.lastExitTimestamp = now();
+        try { localStorage.setItem(this.save.key, JSON.stringify(this.exportState())); } catch (_) {}
+        try { window.YGSDK.gameplayStop(); } catch (_) {}
+      });
     }
 
     exportState() {
-      // keep only safe JSON
       return {
         money: this.state.money,
         clickValue: this.state.clickValue,
@@ -862,18 +783,17 @@
         activeScreen: this.state.activeScreen,
         audioEnabled: this.state.audioEnabled,
         musicEnabled: this.state.musicEnabled,
-        lang: this.state.lang,
         rewardBoostActive: this.state.rewardBoostActive,
         rewardBoostEndTime: this.state.rewardBoostEndTime,
-        lastSaveTimestamp: now(),
         lastExitTimestamp: now(),
-        shopBuys: [...this.state.shopBuys]
+        shopBuys: [...this.state.shopBuys],
+        dailyLastClaim: this.state.dailyLastClaim,
+        dailyStreak: this.state.dailyStreak
       };
     }
 
     importState(d) {
       try {
-        // minimal validation
         if (!d || typeof d !== "object") return;
 
         const s = this.state;
@@ -890,35 +810,33 @@
         s.totalClicks = Number(d.totalClicks || 0);
         s.playTimeSeconds = Number(d.playTimeSeconds || 0);
 
-        s.businessLevel = Number(d.businessLevel || 1);
+        s.businessLevel = clamp(Number(d.businessLevel || 1), 1, this._businessMaxLevel);
         s.businessProgress = Number(d.businessProgress || 0);
-        s.businessProgressGoal = Number(d.businessProgressGoal || 200);
+        s.businessProgressGoal = Number(d.businessProgressGoal || 180);
 
         s.activeScreen = (d.activeScreen || "click");
         s.audioEnabled = (d.audioEnabled !== false);
         s.musicEnabled = !!d.musicEnabled;
-        s.lang = (d.lang === "ru") ? "ru" : "en";
 
         s.rewardBoostActive = !!d.rewardBoostActive;
         s.rewardBoostEndTime = Number(d.rewardBoostEndTime || 0);
 
         s.lastExitTimestamp = Number(d.lastExitTimestamp || now());
-        s.shopBuys = Array.isArray(d.shopBuys) ? d.shopBuys.slice(0, 5).map(x => Number(x || 0)) : [0,0,0,0,0];
 
-        // clamp
-        s.businessLevel = clamp(s.businessLevel, 1, this._businessMaxLevel);
+        s.shopBuys = Array.isArray(d.shopBuys) ? d.shopBuys.slice(0,5).map(x => Number(x || 0)) : [0,0,0,0,0];
+
+        s.dailyLastClaim = String(d.dailyLastClaim || "");
+        s.dailyStreak = Number(d.dailyStreak || 0);
+
         s.money = Math.max(0, s.money);
       } catch (_) {}
     }
 
-    /* =========================
-       Pause / Resume
-    ========================= */
+    /* Pause/Resume */
     pause(reason) {
       this._pauseReasons.add(reason || "unknown");
       this._paused = true;
     }
-
     resume(reason) {
       if (reason) this._pauseReasons.delete(reason);
       if (this._pauseReasons.size === 0) this._paused = false;
@@ -932,64 +850,49 @@
       } else {
         this.resume("hidden");
         this.audio.resumeAllOnFocus();
-        this._applyOfflineIncome(); // if tab was hidden long
+        this._applyOfflineIncome();
       }
     }
-
     _onBlur() {
       this.pause("blur");
       this.audio.stopAllOnPause();
       this._markExit();
     }
-
     _onFocus() {
       this.resume("blur");
       this.audio.resumeAllOnFocus();
       this._applyOfflineIncome();
     }
-
     _markExit() {
       this.state.lastExitTimestamp = now();
       this.save.requestSave();
     }
 
-    /* =========================
-       Layout scale-to-fit
-    ========================= */
+    /* Mobile scale-to-fit */
     _onResize() {
       const stage = document.getElementById("stage");
       const wrap = document.getElementById("wrap");
-
       const vw = wrap.clientWidth;
       const vh = wrap.clientHeight;
 
-      const sw = 470;
-      const sh = 930;
-
-      // Keep ratio <= 1:2 active field (already portrait). Scale to fit.
+      const sw = 470, sh = 930;
       const scale = Math.min(vw / sw, vh / sh);
+
       stage.style.transform = `scale(${scale})`;
     }
 
-    /* =========================
-       Economy / Effective values
-    ========================= */
+    /* Economy */
     getIncomePerSecondEffective() {
       const s = this.state;
       let ips = s.incomePerSecond;
 
-      // Business Boost acts as multiplier
-      const boostMul = 1 + (s.upgradeLevels.boost - 1) * 0.08; // +8% each
+      const boostMul = 1 + (s.upgradeLevels.boost - 1) * 0.08;
       ips *= boostMul;
 
-      // Auto Collect adds extra passive
-      const autoBonus = (s.upgradeLevels.auto - 1) * 0.6;
-      ips += autoBonus;
+      ips += (s.upgradeLevels.auto - 1) * 0.6;
 
-      // Shop items give multipliers
       ips *= this._shopIncomeMultiplier();
 
-      // Reward boost x2
       if (s.rewardBoostActive && now() < s.rewardBoostEndTime) ips *= 2;
 
       return Math.max(0, ips);
@@ -998,53 +901,45 @@
     getClickValueEffective() {
       const s = this.state;
       let cv = s.clickValue;
-
-      // boost increases click too
       cv *= 1 + (s.upgradeLevels.boost - 1) * 0.06;
-
-      // shop boosts click
       cv *= this._shopClickMultiplier();
-
-      // reward boost x2 earnings (applies to click too for stronger feel)
       if (s.rewardBoostActive && now() < s.rewardBoostEndTime) cv *= 2;
-
       return Math.max(1, cv);
     }
 
     _shopIncomeMultiplier() {
       const b = this.state.shopBuys;
-      // gentle stacking, non-crazy
       return (1 + b[0]*0.10) * (1 + b[1]*0.18) * (1 + b[3]*0.30) * (1 + b[4]*0.45);
     }
-
     _shopClickMultiplier() {
       const b = this.state.shopBuys;
       return (1 + b[2]*0.20) * (1 + b[3]*0.12);
     }
 
-    /* =========================
-       Costs
-    ========================= */
+    /* Costs */
     getUpgradeCost(type) {
       const lvl = this.state.upgradeLevels[type] || 1;
-      const base = (type === "income") ? 50 : (type === "boost") ? 90 : 120;
+      const base = (type === "income") ? 55 : (type === "boost") ? 95 : 125;
       const k = (type === "income") ? 1.45 : (type === "boost") ? 1.55 : 1.62;
       return Math.floor(base * Math.pow(k, lvl - 1));
     }
 
     getShopCosts() {
-      // costs increase per purchase
       const buys = this.state.shopBuys;
       const bases = [100_000, 500_000, 1_500_000, 8_500_000, 35_000_000];
       const mults = [1.55, 1.65, 1.7, 1.75, 1.8];
       return bases.map((b, i) => Math.floor(b * Math.pow(mults[i], buys[i])));
     }
 
-    /* =========================
-       Actions
-    ========================= */
+    _businessUpgradeCost() {
+      const bl = this.state.businessLevel;
+      const base = 140;
+      const k = 1.52;
+      return Math.floor(base * Math.pow(k, bl - 1));
+    }
+
+    /* Screens */
     setScreen(screen) {
-      // map: click, shop, business, rewards, settings
       if (!this.ui || !this.ui.screens[screen]) return;
 
       this.state.activeScreen = screen;
@@ -1052,16 +947,17 @@
       this.ui.updateAll();
       this.save.requestSave();
 
-      // Interstitial: when entering business screen (not more often than 90 sec)
+      // interstitial: entering business screen not more often than 90 sec
       if (screen === "business") {
         const t = now();
         if (t - this._enteredBusinessAt > 90_000) {
           this._enteredBusinessAt = t;
-          this.ads.showInterstitial("enter_business").catch(()=>{});
+          this.ads.showInterstitial().catch(()=>{});
         }
       }
     }
 
+    /* Tap coin */
     onTapCoin(ev) {
       if (this._paused) return;
 
@@ -1069,24 +965,21 @@
       this.state.money += cv;
       this.state.totalClicks += 1;
 
-      // progress also grows from clicks
-      const progAdd = 1 + Math.floor(cv * 0.08); // scales gently
+      // progress from clicks
+      const progAdd = 1 + Math.floor(cv * 0.08);
       this._addBusinessProgress(progAdd);
 
-      // fx
-      const rect = document.getElementById("stage").getBoundingClientRect();
-      const x = (ev.clientX - rect.left) / (rect.width / 470);
-      const y = (ev.clientY - rect.top) / (rect.height / 930);
-      this.ui.spawnCoinBurst(x, y, 6);
-      this.ui.spawnPopText(x + 10, y - 10, `+${formatInt(cv, this.state.lang)}`);
+      // FX (better)
+      const p = this.ui.fx.stagePointFromClient(ev.clientX, ev.clientY);
+      this.ui.fx.spawnCoinArcToMoney(p.x, p.y, 6);
+      this.ui.fx.spawnPop(p.x + 12, p.y - 10, `+${formatIntRU(cv)}`);
 
-      // sound
       this.audio.playClick();
-
       this.ui.updateAll();
       this.save.requestSave();
     }
 
+    /* Upgrades */
     buyUpgrade(type) {
       if (this._paused) return;
       const cost = this.getUpgradeCost(type);
@@ -1095,36 +988,26 @@
       this.state.money -= cost;
       this.state.upgradeLevels[type] = (this.state.upgradeLevels[type] || 1) + 1;
 
-      // apply base growth
       if (type === "income") {
-        // increases base IPS
         this.state.incomePerSecond += 1 + Math.floor(this.state.upgradeLevels.income * 0.15);
       } else if (type === "boost") {
-        // increases base click slightly
         this.state.clickValue += 1 + Math.floor(this.state.upgradeLevels.boost * 0.10);
       } else if (type === "auto") {
-        // increases base IPS a bit
         this.state.incomePerSecond += 1 + Math.floor(this.state.upgradeLevels.auto * 0.08);
       }
 
       this.audio.playUpgrade();
-
-      // small interstitial occasionally on logical breaks (optional)
-      // here: do nothing; we keep interstitial on business level ups and entering business.
-
       this.ui.updateAll();
       this.save.requestSave();
     }
 
     upgradeBusiness() {
       if (this._paused) return;
-
-      // Spend money to push progress (logical "upgrade" like in reference)
       const cost = this._businessUpgradeCost();
       if (this.state.money < cost) return;
 
       this.state.money -= cost;
-      const push = Math.floor(40 + this.getIncomePerSecondEffective() * 0.6);
+      const push = Math.floor(55 + this.getIncomePerSecondEffective() * 0.55);
       this._addBusinessProgress(push);
 
       this.audio.playUpgrade();
@@ -1132,26 +1015,71 @@
       this.save.requestSave();
     }
 
-    _businessUpgradeCost() {
-      const bl = this.state.businessLevel;
-      // early cheap, later grows
-      const base = 120;
-      const k = 1.52;
-      return Math.floor(base * Math.pow(k, bl - 1));
-    }
-
+    /* Rewards */
     async rewardBoost() {
       if (this._paused) return;
-
-      // Rewarded video -> x2 for 3 minutes
       await this.ads.showRewarded(() => {
         this.state.rewardBoostActive = true;
-        this.state.rewardBoostEndTime = now() + 180_000; // 3 min
+        this.state.rewardBoostEndTime = now() + 180_000;
         this.ui.updateAll();
         this.save.requestSave();
       });
     }
 
+    isDailyAvailable() {
+      return this.state.dailyLastClaim !== todayKey();
+    }
+
+    _dailyRewardAmount() {
+      // scales with business and economy (balanced)
+      const bl = this.state.businessLevel;
+      const ips = this.getIncomePerSecondEffective();
+      const base = 250 + bl * 120;
+      const scaled = base + Math.floor(ips * 35);
+      return Math.max(200, scaled);
+    }
+
+    async claimDailyReward() {
+      if (this._paused) return;
+      if (!this.isDailyAvailable()) return;
+
+      const amount = this._dailyRewardAmount();
+
+      // streak handling: if claimed yesterday, streak++ else reset to 1
+      const last = this.state.dailyLastClaim;
+      const t = new Date();
+      const yesterday = new Date(t.getFullYear(), t.getMonth(), t.getDate() - 1);
+      const yKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth()+1).padStart(2,"0")}-${String(yesterday.getDate()).padStart(2,"0")}`;
+      if (last === yKey) this.state.dailyStreak = Math.min(30, (this.state.dailyStreak || 0) + 1);
+      else this.state.dailyStreak = 1;
+
+      const streakBonusMul = 1 + Math.min(0.40, (this.state.dailyStreak - 1) * 0.03); // up to +40%
+      const total = Math.floor(amount * streakBonusMul);
+
+      // give base and offer double by ad
+      this.state.money += total;
+      this.state.dailyLastClaim = todayKey();
+      this.save.requestSave();
+      this.ui.updateAll();
+
+      this.ui.showModal(
+        "Ежедневная награда",
+        `Вы получили: ${formatIntRU(total)}\nСерия: ${this.state.dailyStreak} дн.`,
+        {
+          actionText: "УДВОИТЬ ЗА РЕКЛАМУ",
+          onAction: async () => {
+            this.ui.hideModal();
+            await this.ads.showRewarded(() => {
+              this.state.money += total;
+              this.ui.updateAll();
+              this.save.requestSave();
+            });
+          }
+        }
+      );
+    }
+
+    /* Shop */
     buyShopItem(index) {
       if (this._paused) return;
       const costs = this.getShopCosts();
@@ -1166,22 +1094,18 @@
       this.save.requestSave();
     }
 
+    /* Auth explicit */
     async requestAuth() {
-      // explicit action only (button)
       const ok = await window.YGSDK.authRequest();
       if (ok) {
-        // load cloud save; if exists, merge by taking max of key values (safe)
         const cloud = await this.save.cloudLoad();
-        if (cloud) {
-          this._mergeCloud(cloud);
-        }
+        if (cloud) this._mergeCloud(cloud);
         await this.save.saveNow();
       }
       this.ui.updateAll();
     }
 
     _mergeCloud(cloud) {
-      // Keep progress whichever is larger (simple).
       try {
         const s = this.state;
         if (typeof cloud.money === "number") s.money = Math.max(s.money, cloud.money);
@@ -1196,42 +1120,35 @@
         s.playTimeSeconds = Math.max(s.playTimeSeconds, Number(cloud.playTimeSeconds || 0));
         s.businessLevel = Math.max(s.businessLevel, Number(cloud.businessLevel || 1));
         s.businessProgress = Math.max(s.businessProgress, Number(cloud.businessProgress || 0));
-        s.businessProgressGoal = Math.max(s.businessProgressGoal, Number(cloud.businessProgressGoal || 200));
+        s.businessProgressGoal = Math.max(s.businessProgressGoal, Number(cloud.businessProgressGoal || 180));
 
         if (Array.isArray(cloud.shopBuys)) {
           for (let i = 0; i < 5; i++) s.shopBuys[i] = Math.max(s.shopBuys[i] || 0, Number(cloud.shopBuys[i] || 0));
         }
+
+        s.dailyLastClaim = (cloud.dailyLastClaim || s.dailyLastClaim || "");
+        s.dailyStreak = Math.max(Number(cloud.dailyStreak || 0), s.dailyStreak || 0);
       } catch (_) {}
     }
 
     toggleSound() {
       this.state.audioEnabled = !this.state.audioEnabled;
       this.audio.setEnabled(this.state.audioEnabled);
-      this.ui.updateSettings();
+      this.ui.updateAll();
       this.save.requestSave();
     }
 
     toggleMusic() {
       this.state.musicEnabled = !this.state.musicEnabled;
       this.audio.setMusicEnabled(this.state.musicEnabled);
-      this.ui.updateSettings();
-      this.save.requestSave();
-    }
-
-    toggleLang() {
-      this.state.lang = (this.state.lang === "ru") ? "en" : "ru";
-      this.ui.applyI18n(this.state.lang);
       this.ui.updateAll();
       this.save.requestSave();
     }
 
-    /* =========================
-       Business progress
-    ========================= */
+    /* Business progress */
     _addBusinessProgress(amount) {
       const s = this.state;
       s.businessProgress += Math.floor(Math.max(0, amount));
-
       while (s.businessProgress >= s.businessProgressGoal) {
         s.businessProgress -= s.businessProgressGoal;
         this._levelUpBusiness();
@@ -1241,61 +1158,50 @@
     _levelUpBusiness() {
       const s = this.state;
       if (s.businessLevel >= this._businessMaxLevel) {
-        // cap
         s.businessProgress = Math.min(s.businessProgress, s.businessProgressGoal);
         return;
       }
       s.businessLevel += 1;
 
-      // raise goal to keep 10+ minutes progression
-      // early quick, later tougher
       const bl = s.businessLevel;
-      const growth = (bl < 6) ? 1.35 : (bl < 12) ? 1.52 : 1.70;
-      s.businessProgressGoal = Math.floor(s.businessProgressGoal * growth + bl * 80);
+      const growth = (bl < 6) ? 1.34 : (bl < 12) ? 1.52 : 1.70;
+      s.businessProgressGoal = Math.floor(s.businessProgressGoal * growth + bl * 85);
 
-      // reward some base scaling
+      // small scaling
       s.incomePerSecond += Math.floor(1 + bl * 0.6);
       s.clickValue += Math.floor(1 + bl * 0.2);
 
-      // interstitial every N levels (logical break)
+      // interstitial each N levels
       if (bl % this._interstitialEveryLevels === 0) {
-        this.ads.showInterstitial("biz_level").catch(()=>{});
+        this.ads.showInterstitial().catch(()=>{});
       }
     }
 
-    /* =========================
-       Offline income
-    ========================= */
+    /* Offline income */
     _applyOfflineIncome() {
       const s = this.state;
       const last = Number(s.lastExitTimestamp || now());
       const diffMs = Math.max(0, now() - last);
-
-      // ignore tiny gaps
       if (diffMs < 8_000) return;
 
-      const capMs = 2 * 60 * 60 * 1000; // 2 hours
+      const capMs = 2 * 60 * 60 * 1000;
       const used = Math.min(diffMs, capMs);
       const seconds = used / 1000;
 
       const earned = Math.floor(this.getIncomePerSecondEffective() * seconds);
       if (earned <= 0) return;
 
-      // apply base offline
       s.money += earned;
 
-      // show modal with optional double rewarded
-      const body = this.t("modal_offline_body").replace("{x}", formatInt(earned, s.lang));
       this.ui.showModal(
-        this.t("modal_offline_title"),
-        body,
+        "Офлайн доход",
+        `Пока вас не было, вы заработали: ${formatIntRU(earned)}`,
         {
-          actionText: this.t("modal_offline_action"),
+          actionText: "УДВОИТЬ ЗА РЕКЛАМУ",
           onAction: async () => {
             this.ui.hideModal();
-            // double via rewarded
             await this.ads.showRewarded(() => {
-              s.money += earned; // add same again
+              s.money += earned;
               this.ui.updateAll();
               this.save.requestSave();
             });
@@ -1303,45 +1209,43 @@
         }
       );
 
-      // reset last exit to now to avoid repeated grants
       s.lastExitTimestamp = now();
       this.save.requestSave();
       this.ui.updateAll();
     }
 
-    /* =========================
-       Main loop
-    ========================= */
+    /* Loop */
     _tick() {
       const t = now();
       const dt = (t - this._lastFrameAt) / 1000;
       this._lastFrameAt = t;
 
       if (!this._paused) {
-        // time & passive
         this.state.playTimeSeconds += dt;
 
-        // reward boost expire
+        // expire boost
         if (this.state.rewardBoostActive && t >= this.state.rewardBoostEndTime) {
           this.state.rewardBoostActive = false;
           this.state.rewardBoostEndTime = 0;
         }
 
-        // passive money
+        // passive
         const ips = this.getIncomePerSecondEffective();
         this.state.money += ips * dt;
 
-        // progress also from passive (tycoon feel)
+        // business progress from passive
         const prog = Math.floor((ips * dt) * 0.22);
         if (prog > 0) this._addBusinessProgress(prog);
 
-        // ambient coins on business screen
+        // ambient coins on business screen (живее)
         if (this.state.activeScreen === "business") {
-          // spawn occasionally
-          if (Math.random() < 0.04) this.ui.spawnSkyCoin();
+          if (Math.random() < 0.05) this.ui.fx.spawnAmbientCoin();
         }
 
-        // autosave every ~10s (plus explicit saves)
+        // update FX
+        this.ui.fx.update(dt);
+
+        // autosave
         this._accumSaveTime += dt;
         if (this._accumSaveTime >= 10) {
           this._accumSaveTime = 0;
@@ -1349,39 +1253,21 @@
         }
 
         this.ui.updateAll();
+      } else {
+        // still animate FX slowly when paused? no — stop for compliance
       }
 
       requestAnimationFrame(this._tick);
     }
   }
 
-  /* =========================
-     Boot
-  ========================= */
+  /* ========= Boot ========= */
   const game = new Game();
   window.__GAME__ = game;
 
-  // Bind shop buy buttons after UI is created
   async function start() {
     await game.init();
-
-    // hook shop buttons
-    const buyIds = ["buy1", "buy2", "buy3", "buy4", "buy5"];
-    buyIds.forEach((id, i) => {
-      const btn = document.getElementById(id);
-      btn.addEventListener("click", () => game.buyShopItem(i));
-    });
-
-    // keep lastExitTimestamp updated on unload (best-effort)
-    window.addEventListener("beforeunload", () => {
-      game.state.lastExitTimestamp = now();
-      try { localStorage.setItem(game.save.key, JSON.stringify(game.exportState())); } catch (_) {}
-      try { window.YGSDK.gameplayStop(); } catch (_) {}
-    });
   }
 
-  start().catch((e) => {
-    console.error("Game init failed:", e);
-  });
-
+  start().catch(e => console.error("Game init failed:", e));
 })();

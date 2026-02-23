@@ -6,22 +6,19 @@
         content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="mobile-web-app-capable" content="yes" />
-  <title>Business Empire Idle</title>
+  <meta name="format-detection" content="telephone=no" />
+  <title>Бизнес Империя — Idle</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
 </head>
 
 <body>
-  <!-- Декоративный фон по бокам на ПК -->
   <div id="pageBg"></div>
 
-  <!-- Stage (портретное поле) -->
   <div id="wrap">
     <div id="stage" aria-label="Game Stage">
-      <!-- Background -->
       <div id="bg" class="bg"></div>
 
-      <!-- Top money bar -->
       <div class="topbar">
         <div class="moneybar">
           <div class="coinBadge" aria-hidden="true"></div>
@@ -29,16 +26,15 @@
         </div>
       </div>
 
-      <!-- Screen container -->
       <div id="screenRoot" class="screenRoot">
-        <!-- CLICK screen -->
+        <!-- CLICK -->
         <section id="screen-click" class="screen active">
           <div class="clickCenter">
-            <button id="bigCoinBtn" class="bigCoinBtn" type="button" aria-label="Tap coin">
+            <button id="bigCoinBtn" class="bigCoinBtn" type="button" aria-label="Тап">
               <div class="bigCoinRing">
                 <div class="bigCoinFace"></div>
               </div>
-              <div class="tapLabel" id="tapLabel">TAP!</div>
+              <div class="tapLabel" id="tapLabel">ТAP!</div>
               <div class="tapHand" aria-hidden="true"></div>
             </button>
           </div>
@@ -47,11 +43,12 @@
             <div class="upgradeCard blue" data-upgrade="income">
               <div class="ucIcon ucIncome" aria-hidden="true"></div>
               <div class="ucText">
-                <div class="ucTitle" data-i18n="upgrade_income_title">Increase Income</div>
-                <div class="ucLevel" id="lvl-income">Lv. 1</div>
+                <div class="ucTitle">Увеличить доход</div>
+                <div class="ucLevel" id="lvl-income">Ур. 1</div>
+                <div class="ucCost" id="cost-income">0</div>
               </div>
               <button class="ucBtn" id="btn-income" type="button">
-                <span data-i18n="upgrade_btn">UPGRADE</span>
+                <span>УЛУЧШИТЬ</span>
                 <i class="miniCoin" aria-hidden="true"></i>
               </button>
             </div>
@@ -59,11 +56,12 @@
             <div class="upgradeCard orange" data-upgrade="boost">
               <div class="ucIcon ucBoost" aria-hidden="true"></div>
               <div class="ucText">
-                <div class="ucTitle" data-i18n="upgrade_boost_title">Business Boost</div>
-                <div class="ucLevel" id="lvl-boost">Lv. 1</div>
+                <div class="ucTitle">Бизнес буст</div>
+                <div class="ucLevel" id="lvl-boost">Ур. 1</div>
+                <div class="ucCost" id="cost-boost">0</div>
               </div>
               <button class="ucBtn" id="btn-boost" type="button">
-                <span data-i18n="upgrade_btn">UPGRADE</span>
+                <span>УЛУЧШИТЬ</span>
                 <i class="miniCoin" aria-hidden="true"></i>
               </button>
             </div>
@@ -71,34 +69,33 @@
             <div class="upgradeCard purple" data-upgrade="auto">
               <div class="ucIcon ucAuto" aria-hidden="true"></div>
               <div class="ucText">
-                <div class="ucTitle" data-i18n="upgrade_auto_title">Auto Collect</div>
-                <div class="ucLevel" id="lvl-auto">Lv. 1</div>
+                <div class="ucTitle">Автосбор</div>
+                <div class="ucLevel" id="lvl-auto">Ур. 1</div>
+                <div class="ucCost" id="cost-auto">0</div>
               </div>
               <button class="ucBtn" id="btn-auto" type="button">
-                <span data-i18n="upgrade_btn">UPGRADE</span>
+                <span>УЛУЧШИТЬ</span>
                 <i class="miniCoin" aria-hidden="true"></i>
               </button>
             </div>
           </div>
         </section>
 
-        <!-- BUSINESS/PROGRESS screen -->
+        <!-- BUSINESS -->
         <section id="screen-business" class="screen">
           <div class="bizWrap">
-            <div class="bizSkyCoins" id="bizSkyCoins" aria-hidden="true"></div>
-
             <div class="buildings">
-              <div class="bld bldShop" id="bldShop" aria-label="Shop building"></div>
-              <div class="bld bldInc" id="bldInc" aria-label="Business Inc building"></div>
-              <div class="bld bldCorp" id="bldCorp" aria-label="Corporation building"></div>
+              <div class="bld bldShop" id="bldShop" aria-label="Магазин"></div>
+              <div class="bld bldInc" id="bldInc" aria-label="Компания"></div>
+              <div class="bld bldCorp" id="bldCorp" aria-label="Корпорация"></div>
             </div>
 
             <div class="stages">
-              <button class="stagePill" id="pill1" type="button">Lv. 1</button>
+              <button class="stagePill" id="pill1" type="button">Ур. 1</button>
               <div class="stageArrow" aria-hidden="true"></div>
-              <button class="stagePill" id="pill2" type="button">Lv. 5</button>
+              <button class="stagePill" id="pill2" type="button">Ур. 5</button>
               <div class="stageArrow" aria-hidden="true"></div>
-              <button class="stagePill" id="pill3" type="button">Lv. 10</button>
+              <button class="stagePill" id="pill3" type="button">Ур. 10</button>
             </div>
 
             <div class="progressRow">
@@ -106,7 +103,7 @@
                 <div class="progressFill" id="progressFill"></div>
               </div>
               <button class="upgradeWide" id="bizUpgradeBtn" type="button">
-                <span data-i18n="biz_upgrade_btn">UPGRADE</span>
+                <span>УЛУЧШИТЬ</span>
                 <i class="miniCoin" aria-hidden="true"></i>
               </button>
             </div>
@@ -114,26 +111,26 @@
             <div class="progressLabel" id="progressLabel">0/0</div>
 
             <div class="statsPanel">
-              <div class="panelTitle" data-i18n="stats_title">Stats</div>
+              <div class="panelTitle">Статистика</div>
               <div class="statsGrid">
                 <div class="statItem">
-                  <div class="statKey" data-i18n="stat_total_clicks">Total Clicks</div>
+                  <div class="statKey">Кликов всего</div>
                   <div class="statVal" id="statClicks">0</div>
                 </div>
                 <div class="statItem">
-                  <div class="statKey" data-i18n="stat_income_ps">Income / sec</div>
+                  <div class="statKey">Доход / сек</div>
                   <div class="statVal" id="statIPS">0</div>
                 </div>
                 <div class="statItem">
-                  <div class="statKey" data-i18n="stat_click_value">Click Value</div>
+                  <div class="statKey">Доход за клик</div>
                   <div class="statVal" id="statCV">0</div>
                 </div>
                 <div class="statItem">
-                  <div class="statKey" data-i18n="stat_play_time">Play Time</div>
+                  <div class="statKey">Время в игре</div>
                   <div class="statVal" id="statPT">0:00</div>
                 </div>
                 <div class="statItem span2">
-                  <div class="statKey" data-i18n="stat_business_level">Business Level</div>
+                  <div class="statKey">Уровень бизнеса</div>
                   <div class="statVal" id="statBL">1</div>
                 </div>
               </div>
@@ -141,23 +138,23 @@
           </div>
         </section>
 
-        <!-- UPGRADE SHOP screen -->
+        <!-- SHOP -->
         <section id="screen-shop" class="screen">
           <div class="shopPanel">
             <div class="shopHeader">
               <div class="shopHeaderCoin" aria-hidden="true"></div>
-              <div class="shopHeaderTitle" data-i18n="shop_title">UPGRADE SHOP</div>
+              <div class="shopHeaderTitle">МАГАЗИН УЛУЧШЕНИЙ</div>
             </div>
 
             <div class="shopList">
               <div class="shopRow">
                 <div class="shopIcon siFunds" aria-hidden="true"></div>
                 <div class="shopMid">
-                  <div class="shopName" data-i18n="shop_item_1">Invest Funds</div>
+                  <div class="shopName">Инвестировать</div>
                   <div class="shopPrice" id="shopPrice1">100K</div>
                 </div>
                 <button class="buyBtn" id="buy1" type="button">
-                  <span data-i18n="buy_btn">BUY</span>
+                  <span>КУПИТЬ</span>
                   <i class="miniCoin" aria-hidden="true"></i>
                 </button>
               </div>
@@ -165,11 +162,11 @@
               <div class="shopRow">
                 <div class="shopIcon siExpand" aria-hidden="true"></div>
                 <div class="shopMid">
-                  <div class="shopName" data-i18n="shop_item_2">Expand Business</div>
+                  <div class="shopName">Расширить бизнес</div>
                   <div class="shopPrice" id="shopPrice2">500K</div>
                 </div>
                 <button class="buyBtn" id="buy2" type="button">
-                  <span data-i18n="buy_btn">BUY</span>
+                  <span>КУПИТЬ</span>
                   <i class="miniCoin" aria-hidden="true"></i>
                 </button>
               </div>
@@ -177,11 +174,11 @@
               <div class="shopRow">
                 <div class="shopIcon siManager" aria-hidden="true"></div>
                 <div class="shopMid">
-                  <div class="shopName" data-i18n="shop_item_3">Hire Manager</div>
+                  <div class="shopName">Нанять менеджера</div>
                   <div class="shopPrice" id="shopPrice3">1.5M</div>
                 </div>
                 <button class="buyBtn" id="buy3" type="button">
-                  <span data-i18n="buy_btn">BUY</span>
+                  <span>КУПИТЬ</span>
                   <i class="miniCoin" aria-hidden="true"></i>
                 </button>
               </div>
@@ -189,11 +186,11 @@
               <div class="shopRow">
                 <div class="shopIcon siSummit" aria-hidden="true"></div>
                 <div class="shopMid">
-                  <div class="shopName" data-i18n="shop_item_4">Business Summit</div>
+                  <div class="shopName">Бизнес-саммит</div>
                   <div class="shopPrice" id="shopPrice4">8.5M</div>
                 </div>
                 <button class="buyBtn" id="buy4" type="button">
-                  <span data-i18n="buy_btn">BUY</span>
+                  <span>КУПИТЬ</span>
                   <i class="miniCoin" aria-hidden="true"></i>
                 </button>
               </div>
@@ -201,138 +198,132 @@
               <div class="shopRow">
                 <div class="shopIcon siGlobal" aria-hidden="true"></div>
                 <div class="shopMid">
-                  <div class="shopName" data-i18n="shop_item_5">Global Expansion</div>
+                  <div class="shopName">Глобальная экспансия</div>
                   <div class="shopPrice" id="shopPrice5">35M</div>
                 </div>
                 <button class="buyBtn" id="buy5" type="button">
-                  <span data-i18n="buy_btn">BUY</span>
+                  <span>КУПИТЬ</span>
                   <i class="miniCoin" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
 
-            <div class="shopHint" data-i18n="shop_hint">
-              Buy upgrades to speed up your empire growth.
-            </div>
+            <div class="shopHint">Покупки ускоряют рост вашей империи.</div>
           </div>
         </section>
 
-        <!-- REWARDS screen -->
+        <!-- REWARDS -->
         <section id="screen-rewards" class="screen">
           <div class="panel">
-            <div class="panelTitle" data-i18n="rewards_title">Rewards</div>
+            <div class="panelTitle">Награды</div>
 
             <div class="rewardCard">
               <div class="rewardIcon" aria-hidden="true"></div>
               <div class="rewardText">
-                <div class="rewardName" data-i18n="reward_boost_title">Watch Ad → x2 income for 3 minutes</div>
+                <div class="rewardName">Смотреть рекламу → x2 доход на 3 минуты</div>
                 <div class="rewardSub" id="rewardSub">x2: 0:00</div>
               </div>
-              <button class="rewardBtn" id="btnRewardBoost" type="button" data-i18n="reward_watch_btn">
-                WATCH
-              </button>
+              <button class="rewardBtn" id="btnRewardBoost" type="button">СМОТРЕТЬ</button>
+            </div>
+
+            <div class="rewardCard">
+              <div class="rewardIcon riDaily" aria-hidden="true"></div>
+              <div class="rewardText">
+                <div class="rewardName">Ежедневная награда</div>
+                <div class="rewardSub" id="dailySub">Доступно: да</div>
+              </div>
+              <button class="rewardBtn" id="btnDaily" type="button">ЗАБРАТЬ</button>
             </div>
 
             <div class="rewardCard">
               <div class="rewardIcon riOffline" aria-hidden="true"></div>
               <div class="rewardText">
-                <div class="rewardName" data-i18n="reward_offline_title">Offline income</div>
-                <div class="rewardSub" data-i18n="reward_offline_sub">Earn while you were away (up to 2 hours).</div>
+                <div class="rewardName">Офлайн доход</div>
+                <div class="rewardSub">Заработок пока вас не было (до 2 часов).</div>
               </div>
-              <button class="rewardBtn ghost" id="btnShowOfflineInfo" type="button" data-i18n="reward_info_btn">
-                INFO
-              </button>
+              <button class="rewardBtn ghost" id="btnShowOfflineInfo" type="button">ИНФО</button>
             </div>
 
-            <div class="panelNote" data-i18n="ads_note">
-              Ads are optional and only give in-game bonuses.
-            </div>
+            <div class="panelNote">Реклама необязательна и даёт только внутриигровые бонусы.</div>
           </div>
         </section>
 
-        <!-- SETTINGS screen -->
+        <!-- SETTINGS -->
         <section id="screen-settings" class="screen">
           <div class="panel">
-            <div class="panelTitle" data-i18n="settings_title">Settings</div>
+            <div class="panelTitle">Настройки</div>
 
             <div class="toggleRow">
               <div class="toggleLeft">
-                <div class="toggleName" data-i18n="settings_sound">Sound</div>
-                <div class="toggleSub" data-i18n="settings_sound_sub">Click & upgrade sounds</div>
+                <div class="toggleName">Звук</div>
+                <div class="toggleSub">Клики и улучшения</div>
               </div>
               <button class="toggleBtn" id="toggleSound" type="button">ON</button>
             </div>
 
             <div class="toggleRow">
               <div class="toggleLeft">
-                <div class="toggleName" data-i18n="settings_music">Music</div>
-                <div class="toggleSub" data-i18n="settings_music_sub">Background music</div>
+                <div class="toggleName">Музыка</div>
+                <div class="toggleSub">Фоновая музыка</div>
               </div>
               <button class="toggleBtn" id="toggleMusic" type="button">OFF</button>
             </div>
 
-            <div class="toggleRow">
-              <div class="toggleLeft">
-                <div class="toggleName" data-i18n="settings_lang">Language</div>
-                <div class="toggleSub" data-i18n="settings_lang_sub">Switch UI language</div>
-              </div>
-              <button class="toggleBtn" id="toggleLang" type="button">RU</button>
-            </div>
-
             <div class="authBox">
-              <div class="authTitle" data-i18n="auth_title">Cloud Save</div>
-              <div class="authText" data-i18n="auth_text">
-                Sign in to sync progress across devices. Guest mode works without sign-in.
+              <div class="authTitle">Синхронизация</div>
+              <div class="authText">
+                Войдите, чтобы синхронизировать прогресс на разных устройствах.
+                Гостевой режим работает без входа.
               </div>
 
               <div class="authRow">
-                <button class="authBtn" id="btnAuth" type="button" data-i18n="auth_btn">SIGN IN</button>
-                <div class="authStatus" id="authStatus">Guest</div>
+                <button class="authBtn" id="btnAuth" type="button">ВОЙТИ</button>
+                <div class="authStatus" id="authStatus">Гость</div>
               </div>
             </div>
 
-            <div class="panelNote small" data-i18n="settings_note">
-              Game pauses and mutes when tab is hidden or during ads.
+            <div class="panelNote small">
+              Игра ставится на паузу и выключает звук при скрытии вкладки и во время рекламы.
             </div>
           </div>
         </section>
       </div>
 
-      <!-- Bottom tab bar -->
+      <!-- TABBAR -->
       <nav class="tabbar" aria-label="Tab bar">
         <button class="tab active" id="tabHome" type="button" data-screen="click">
           <div class="tabIcon tiHome" aria-hidden="true"></div>
-          <div class="tabLabel" data-i18n="tab_home">Home</div>
+          <div class="tabLabel">Домой</div>
         </button>
         <button class="tab" id="tabShop" type="button" data-screen="shop">
           <div class="tabIcon tiShop" aria-hidden="true"></div>
-          <div class="tabLabel" data-i18n="tab_shop">Shop</div>
+          <div class="tabLabel">Магазин</div>
         </button>
         <button class="tab" id="tabStats" type="button" data-screen="business">
           <div class="tabIcon tiStats" aria-hidden="true"></div>
-          <div class="tabLabel" data-i18n="tab_stats">Stats</div>
+          <div class="tabLabel">Бизнес</div>
         </button>
         <button class="tab" id="tabRewards" type="button" data-screen="rewards">
           <div class="tabIcon tiRewards" aria-hidden="true"></div>
-          <div class="tabLabel" data-i18n="tab_rewards">Rewards</div>
+          <div class="tabLabel">Награды</div>
         </button>
         <button class="tab" id="tabSettings" type="button" data-screen="settings">
           <div class="tabIcon tiSettings" aria-hidden="true"></div>
-          <div class="tabLabel" data-i18n="tab_settings">Settings</div>
+          <div class="tabLabel">Настройки</div>
         </button>
       </nav>
 
-      <!-- FX overlay -->
+      <!-- FX layer -->
       <div id="fxLayer" class="fxLayer" aria-hidden="true"></div>
 
       <!-- Modal -->
       <div id="modalRoot" class="modalRoot hidden" aria-hidden="true">
         <div class="modalBackdrop"></div>
         <div class="modalCard" role="dialog" aria-modal="true" aria-label="Modal">
-          <div class="modalTitle" id="modalTitle">Offline Income</div>
-          <div class="modalBody" id="modalBody">You earned 0</div>
+          <div class="modalTitle" id="modalTitle">Окно</div>
+          <div class="modalBody" id="modalBody">Текст</div>
           <div class="modalBtns">
-            <button class="modalBtn ghost" id="modalClose" type="button" data-i18n="close_btn">CLOSE</button>
+            <button class="modalBtn ghost" id="modalClose" type="button">ЗАКРЫТЬ</button>
             <button class="modalBtn" id="modalAction" type="button">OK</button>
           </div>
         </div>
