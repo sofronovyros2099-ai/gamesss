@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="300" viewBox="0 0 220 300">
+  <rect x="44" y="44" width="132" height="220" rx="18" fill="#ffffff" opacity="0.95"></rect>
+  <rect x="54" y="54" width="112" height="200" rx="14" fill="#dff2ff"></rect>
+  <rect x="44" y="28" width="132" height="44" rx="16" fill="#23b6c8"></rect>
+  <text x="110" y="58" text-anchor="middle" font-size="18" font-family="Arial" font-weight="900" fill="#fff">CORPORATION</text>
+  <g fill="#7fe0ea" opacity="0.95">
+    <rect x="70" y="92" width="36" height="28" rx="6"></rect>
+    <rect x="114" y="92" width="36" height="28" rx="6"></rect>
+    <rect x="70" y="130" width="36" height="28" rx="6"></rect>
+    <rect x="114" y="130" width="36" height="28" rx="6"></rect>
+    <rect x="70" y="168" width="36" height="28" rx="6"></rect>
+    <rect x="114" y="168" width="36" height="28" rx="6"></rect>
+    <rect x="70" y="206" width="36" height="28" rx="6"></rect>
+    <rect x="114" y="206" width="36" height="28" rx="6"></rect>
+  </g>
+</svg>

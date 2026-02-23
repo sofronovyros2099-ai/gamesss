@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="470" height="930" viewBox="0 0 470 930">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#55b8ff"></stop>
+      <stop offset="0.55" stop-color="#bfe9ff"></stop>
+      <stop offset="1" stop-color="#eaffff"></stop>
+    </linearGradient>
+    <radialGradient id="sun" cx="50%" cy="40%" r="40%">
+      <stop offset="0" stop-color="#fff7c7" stop-opacity="0.95"></stop>
+      <stop offset="1" stop-color="#fff7c7" stop-opacity="0"></stop>
+    </radialGradient>
+    <linearGradient id="water" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#4db7ff" stop-opacity="0.55"></stop>
+      <stop offset="1" stop-color="#2a7db6" stop-opacity="0.85"></stop>
+    </linearGradient>
+  </defs>
+
+  <rect width="470" height="930" fill="url(#sky)"></rect>
+  <rect width="470" height="930" fill="url(#sun)"></rect>
+
+  <!-- clouds -->
+  <g opacity="0.9" fill="#ffffff">
+    <path d="M62 140c-18 0-32 10-32 24s14 24 32 24h118c16 0 28-9 28-21 0-11-9-20-22-22-4-15-20-27-40-27-16 0-29 7-36 18z"></path>
+    <path d="M290 170c-16 0-29 9-29 21s13 21 29 21h92c13 0 24-8 24-19 0-10-7-18-18-20-4-13-17-23-33-23-13 0-24 6-29 15z"></path>
+  </g>
+
+  <!-- skyline -->
+  <g opacity="0.55" fill="#3a8fd6">
+    <rect x="35" y="210" width="70" height="260" rx="10"></rect>
+    <rect x="110" y="260" width="55" height="210" rx="10"></rect>
+    <rect x="175" y="230" width="90" height="240" rx="10"></rect>
+    <rect x="275" y="250" width="55" height="220" rx="10"></rect>
+    <rect x="340" y="220" width="80" height="250" rx="10"></rect>
+  </g>
+  <g opacity="0.35" fill="#1f6fb8">
+    <rect x="10" y="280" width="80" height="200" rx="10"></rect>
+    <rect x="95" y="300" width="70" height="180" rx="10"></rect>
+    <rect x="170" y="310" width="90" height="170" rx="10"></rect>
+    <rect x="265" y="290" width="65" height="190" rx="10"></rect>
+    <rect x="335" y="305" width="120" height="175" rx="10"></rect>
+  </g>
+
+  <!-- trees -->
+  <g>
+    <path d="M0 460h470v150H0z" fill="#75c96a" opacity="0.95"></path>
+    <path d="M0 480h470v140H0z" fill="#4fb24a" opacity="0.95"></path>
+    <g fill="#3c9c3f" opacity="0.9">
+      <circle cx="50" cy="520" r="48"></circle>
+      <circle cx="95" cy="540" r="46"></circle>
+      <circle cx="140" cy="518" r="52"></circle>
+      <circle cx="330" cy="520" r="50"></circle>
+      <circle cx="380" cy="540" r="46"></circle>
+      <circle cx="430" cy="520" r="52"></circle>
+    </g>
+  </g>
+
+  <!-- ground / water feel -->
+  <rect x="0" y="610" width="470" height="320" fill="url(#water)"></rect>
+</svg>
